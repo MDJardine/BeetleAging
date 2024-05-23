@@ -1,0 +1,52 @@
+beetle<-read.table(file.choose(), header = T)
+head (beetle)
+
+library(survival)
+library(flexsurv)
+library(ggplot2)
+
+tapply(beetle$Length, beetle$Density, mean)
+tapply(beetle$Length, beetle$Block, mean)
+tapply(beetle$Length, beetle$Sex, mean)
+
+data = factor(beetle$Density, c("High", "Med", "Low"))
+table(data)
+
+density<-factor(data)
+x = density
+y = beetle$Length
+plot(x, y)
+summary(plot)
+
+boxplot(beetle$Length~data, notch=T, xlab="Larval Density",
+ylab="Pronotum Length (mm)", cex.lab=1.5, 
+main="Box Plot of Pronotum Length per Density", cex.main=2)
+
+means <- tapply(beetle$Length, data, mean)
+points(means, pch=16, cex=1.5)
+
+block<-factor(beetle$Block)
+x = block
+y = beetle$Length
+plot(x, y)
+summary(plot)
+
+boxplot(beetle$Length~beetle$Block, notch=T, xlab="Block",
+ylab="Pronotum Length (mm)", cex.lab=1.5, 
+main="Box Plot of Pronotum Length per Block", cex.main=2)
+
+means <- tapply(beetle$Length, beetle$Block, mean)
+points(means, pch=16, cex=1.5)
+
+sex<-factor(beetle$Sex)
+x = sex
+y = beetle$Length
+plot(x, y)
+
+boxplot(beetle$Length~beetle$Sex, notch=T, xlab="Sex",
+ylab="Pronotum Length (mm)", cex.lab=1.5, 
+main="Box Plot of Pronotum Length per Sex", cex.main=2)
+
+means <- tapply(beetle$Length, beetle$Sex, mean)
+points(means, pch=16, cex=1.5)
+

@@ -1,0 +1,48 @@
+# data input
+mortality<-read.table(file.choose(), header = T)
+
+head (mortality)
+
+#simple linear models of lifespan #NOT AGEING#
+model1 <- lm(Life~Density+Length+Sex+Density*Length, data=mortality)
+anova (model1, test="F")
+
+mortality <- cbind (mortality, 1/(mortality$Life))
+
+names(mortality)[names(mortality)=="1/(mortality$Life)"] <- "mortrate"
+
+model2 <- lm(mortrate~Density+Length+Sex+Density*Length, data=mortality)
+anova (model2, test="F")
+plot (model2)
+
+mortality <- cbind (mortality, log10(mortality$mortrate))
+
+names(mortality)[names(mortality)=="log10(mortality$mortrate)"] <- "logmortrate"
+
+model3 <- lm(logmortrate~Density+Length+Sex+Density*Length, data=mortality)
+anova (model3, test="F")
+plot (model3)
+
+par (mfrow = c(2,2))
+
+#density changed to factor
+beetle<-read.table(file.choose(), header = T)
+head (beetle)
+
+model1 <- lm(Life~Density+Length+Sex+Density*Length, data=beetle)
+anova (model1, test="F")
+plot (model1)
+
+###Kaplan Meier analysis
+library (survival)
+
+#model for all data 
+plot(survfit(Surv(beetle$Life, beetle$Status)~1))
+
+#model for denisty seperate
+fit=survfit(Surv(beetle$Life, beetle$Status)~beetle$Density)
+plot(fit)
+summary(fit)
+(fit)
+
+

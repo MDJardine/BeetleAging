@@ -1,0 +1,218 @@
+####THE FULL CODE!!!
+
+setwd("C:/Users/Michael/Documents/University/4th Year/Honours project/stats and data")
+beetle <- read.csv("MORTALITYFULL.csv")
+head (beetle)
+
+##bin into weeks
+beetle<-cbind(beetle, .bincode(beetle$Life, breaks=seq(0, 91, by=7)))
+head (beetle)
+
+names(beetle)[names(beetle)==".bincode(beetle$Life, breaks = seq(0, 91, by = 7))"] <- "week"
+head (beetle)
+
+#COX MODELS TO START OFF ANALYIS
+model1<-coxph(Surv(beetle$Life, beetle$Status) ~ beetle$Density+beetle$Length+beetle$Sex
++beetle$Block)
+cox.zph(model1)
+summary(model1)
+
+model2<-coxph(Surv(beetle$Life, beetle$Status) ~ beetle$Density+beetle$Sex+beetle$Block)
+cox.zph(model2)
+summary(model2)
+
+model3<-coxph(Surv(beetle$Life, beetle$Status) ~ beetle$Density+beetle$Block)
+cox.zph(model3)
+summary(model3)
+
+
+##Mortality curves
+surv = Surv(beetle$week, event = abs(as.numeric(beetle$Status)), type = "right")
+coxph(surv ~ 1)
+fit = coxph(surv ~ 1)
+summ = summary(survfit(fit))
+x = summ$time
+Lx = summ$surv
+Px = Lx[1:13]/c(1,Lx[1:12])
+
+plot(log(-log(Px)), cex.axis = 1, xlab = "Adult age (in weeks)", 
+ylab = "Mortality (Log-scaled)",  cex.lab = 1,cex =2,ylim = c(-5,1),
+main = "Mortality Plot", cex.main = 2, bty = "l")
+
+flexsurvreg(surv ~ 1, dist="exp")
+flexsurvreg(surv ~ 1, dist="gompertz")
+flexsurvreg(surv ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(surv ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(surv ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2) 
+
+##Looking at density
+survD = Surv(beetle$week, event = abs(as.numeric(beetle$Status)), type = "right")
+coxph(survD ~ beetle$Density)
+fitD = coxph(survD ~ beetle$Density)
+summD = summary(survfit(fitD))
+xD = summD$time
+LxD = summD$surv
+PxD = LxD[1:13]/c(1,LxD[1:12])
+cox.zph(fitD)
+plot(log(-log(PxD)), cex.axis = 1, xlab = "Adult age (in weeks)", 
+ylab = "Mortality (Log-scaled)",  cex.lab = 1,cex =2,ylim = c(-5,1),
+main = "Mortality Plot", cex.main = 2, bty = "l")
+
+flexsurvreg(surv ~ 1, dist="exp")
+flexsurvreg(surv ~ 1, dist="gompertz")
+flexsurvreg(surv ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(surv ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(surv ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=3) 
+
+##Density mortality curves for all beetles
+survH = Surv(beetle$week[which(beetle$Density == "High")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Density == "High")], type = 
+"right")
+coxph(survH~1)
+fitH = coxph(survH ~ 1)
+summH = summary(survfit(fitH))
+xH = summH$time 
+LxH = summH$surv
+PxH = LxH[1:13]/c(1,LxH[1:12])
+survM = Surv(beetle$week[which(beetle$Density == "Med")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Density == "Med")], type = 
+"right")
+coxph(survM ~ 1)
+fitM = coxph(survM ~ 1)
+summM = summary(survfit(fitM))
+xM = summM$time 
+LxM = summM$surv
+PxM = LxM[1:13]/c(1,LxM[1:12])
+survL = Surv(beetle$week[which(beetle$Density == "Low")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Density == "Low")], type = 
+"right")
+coxph(survL ~ 1)
+fitL = coxph(survL ~ 1)
+summL = summary(survfit(fitL))
+xL = summL$time 
+LxL = summL$surv
+PxL = LxL[1:13]/c(1,LxL[1:12])
+
+plot(log(-log(PxH)), cex.axis = 1, xlab = "Adult age (in weeks)", ylab = "Mortality (Log-scaled)",  
+cex.lab = 1,cex =2,ylim = c(-5,1),xlim = c(0,13),
+main = "Mortality curve for the three Density Treatments", cex.main = 2, bty = "l")
+points(log(-log(PxM)), pch = 16, cex=2)
+points(log(-log(PxL)), pch=8, cex=2)
+labels<-c("High", "Medium", "Low")
+legend("bottomright", title="Legend", labels, pch=c(1, 16, 8), lty=c(1:3), cex=1)
+
+flexsurvreg(survH ~ 1, dist="exp")
+flexsurvreg(survH ~ 1, dist="gompertz")
+flexsurvreg(survH ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survH ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survH ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2) 
+flexsurvreg(survM ~ 1, dist="exp")
+flexsurvreg(survM ~ 1, dist="gompertz")
+flexsurvreg(survM ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survM ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survM ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=2) 
+flexsurvreg(survL ~ 1, dist="exp")
+flexsurvreg(survL ~ 1, dist="gompertz")
+flexsurvreg(survL ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survL ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survL ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=3) 
+
+
+###Full cox model has shown a difference but where? 
+### High and medium populations are proportional - now only look at these ones to look for an effect of density
+beetleHM<-read.table(file.choose(), header = T)
+head (beetleHM)
+
+model5<-coxph(Surv(beetleHM$Life, beetleHM$Status) ~ beetleHM$Density)
+cox.zph(model5)
+summary(model5)
+
+#PH occur but no difference between the two
+
+###So what about the low density ones? - make new excel sheet with only
+#the low and the medium ones and then split the ages
+beetleML<-read.table(file.choose(), header = T)
+head (beetleML)
+
+model6 <- Surv(beetleML$Life, event = abs(as.numeric(beetleML$Status)), type = "right") ~ beetleML$Density
+cox.zph(coxph(model6))
+coxph(model6)
+#slightly violates the PH but no effect anyway
+
+##splitting the ages
+##Do LOW and MEDIUM have proportional hazards when YOUNG or when OLD?
+#OLD (>4weeks old)
+oldbeetle = beetleML[which(beetleML$Life > 30),]
+head(oldbeetle)
+summary(oldbeetle)
+
+model7 <- Surv(oldbeetle$Life, event = abs(as.numeric(oldbeetle$Status)), type = "right") ~ oldbeetle$Density
+cox.zph(coxph(model7))
+coxph(model7)
+##sample size so low we can no longer detect the effect we would like to - type2 error high
+
+#YOUNG
+youngbeetle = beetleML[which(beetleML$Life < 31),]
+youngbeetle$Density
+summary(youngbeetle$Density)
+
+model8 <- Surv(youngbeetle$Life, event = abs(as.numeric(youngbeetle$Status)), type = "right") ~ youngbeetle$Density
+cox.zph(coxph(model8))
+coxph(model8)
+##again PH but no difference - splitting leads to a loss of power so we can't see the effect
+
+##Do LOW and HIGH have PH?
+beetleHL<-read.table(file.choose(), header = T)
+head (beetleHL)
+
+model9 <- Surv(beetleHL$Life, event = abs(as.numeric(beetleHL$Status)), type = "right") ~ beetleHL$Density
+cox.zph(coxph(model9))
+coxph(model9)
+
+##No proportional hazards but significant difference
+
+##Now to split OLD and YOUNG again
+#OLD
+oldbeetle2 = beetleHL[which(beetleHL$Life > 30),]
+summary(oldbeetle2)
+
+model10 <- Surv(oldbeetle2$Life, event = abs(as.numeric(oldbeetle2$Status)), type = "right") ~ oldbeetle2$Density
+cox.zph(coxph(model10))
+coxph(model10)
+##PH almost there but effect is also on the margin of significance 
+
+#YOUNG
+youngbeetle2 = beetleHL[which(beetleHL$Life < 31),]
+youngbeetle2$Density
+summary(youngbeetle2)
+
+model11 <- Surv(youngbeetle2$Life, event = abs(as.numeric(youngbeetle2$Status)), type = "right") ~ youngbeetle2$Density
+cox.zph(coxph(model11))
+coxph(model11)
+#proportional hazards occur but difference is not significant  
+#low sample size has increased the cance to the type 2 error again.
+
+###Now time to merge the HIgh and the medium ones 
+HM<-beetle$Density
+levels(HM)<-c("HighMed", "Low", "HighMed")
+summary (HM)
+
+model12 <- Surv(beetle$Life, event = abs(as.numeric(beetle$Status)), type = "right") ~ HM
+cox.zph(coxph(model12))
+coxph(model12)
+##NO PH but densities do differ

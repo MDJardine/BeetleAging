@@ -1,0 +1,122 @@
+###success of broods
+count<-matrix(c(8, 22, 43, 0, 0, 6), nrow=3)
+count
+chisq.test (count)
+
+ -->results of success of broods
+count<-matrix(c(8, 22, 44, 0, 0, 5), nrow=3)
+> count
+     [,1] [,2]
+[1,]    8    0
+[2,]   22    0
+[3,]   44    5
+> chisq.test (count)
+
+        Pearson's Chi-squared test
+
+data:  count
+X-squared = 3.2681, df = 2, p-value = 0.1951
+
+Warning message:
+In chisq.test(count) : Chi-squared approximation may be incorrect
+
+
+###survival to adulthood
+count2<-matrix(c(303, 394, 158, 97, 46, 87), nrow=3)
+count2
+chisq.test (count2)
+
+--> results of survival to adulthood
+ count2<-matrix(c(303, 394, 158, 97, 46, 87), nrow=3)
+> count2
+     [,1] [,2]
+[1,]  303   97
+[2,]  394   46
+[3,]  158   87
+> chisq.test (count2)
+
+        Pearson's Chi-squared test
+
+data:  count2
+X-squared = 62.6758, df = 2, p-value = 2.455e-14
+
+##Break down of cross tests
+count2<-matrix(c(303, 158, 97, 87), nrow=2)
+> count2
+     [,1] [,2]
+[1,]  303   97
+[2,]  158   87
+> chisq.test (count2)
+
+        Pearson's Chi-squared test with Yates' continuity correction
+
+data:  count2
+X-squared = 8.9042, df = 1, p-value = 0.002845
+
+#
+> count2<-matrix(c(394, 158, 46, 87), nrow=2)
+> count2
+     [,1] [,2]
+[1,]  394   46
+[2,]  158   87
+> chisq.test (count2)
+
+        Pearson's Chi-squared test with Yates' continuity correction
+
+data:  count2
+X-squared = 61.5525, df = 1, p-value = 4.311e-15
+
+#
+> count2<-matrix(c(394, 303, 46, 97), nrow=2)
+> count2
+     [,1] [,2]
+[1,]  394   46
+[2,]  303   97
+> chisq.test (count2)
+
+        Pearson's Chi-squared test with Yates' continuity correction
+
+data:  count2
+X-squared = 27.2608, df = 1, p-value = 1.778e-07
+
+
+
+#LESS IMPORTANT TESTS
+###Survival to dispersal
+count3<-matrix(c(313, 402, 171, 87, 38, 74), nrow=3)
+count3
+chisq.test (count3)
+
+--> resultrs of survival to dispersal
+ count3<-matrix(c(313, 402, 171, 87, 38, 74), nrow=3)
+> count3
+     [,1] [,2]
+[1,]  313   87
+[2,]  402   38
+[3,]  171   74
+> chisq.test (count3)
+
+        Pearson's Chi-squared test
+
+data:  count3
+X-squared = 53.7936, df = 2, p-value = 2.084e-12
+
+
+###survival of ecolosion
+count4<-matrix(c(303, 394, 158, 10, 8, 13), nrow=3)
+count4
+chisq.test (count4)
+
+--> results of ecolosion survival
+> count4<-matrix(c(303, 394, 158, 10, 8, 13), nrow=3)
+> count4
+     [,1] [,2]
+[1,]  303   10
+[2,]  394    8
+[3,]  158   13
+> chisq.test (count4)
+
+        Pearson's Chi-squared test
+
+data:  count4
+X-squared = 11.3239, df = 2, p-value = 0.003476

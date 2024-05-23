@@ -1,0 +1,208 @@
+beetle<-read.table(file.choose(), header = T)
+head (beetle)
+
+##bin into weeks
+beetle<-cbind(beetle, .bincode(beetle$Life, breaks=seq(0, 91, by=7)))
+head (beetle)
+
+names(beetle)[names(beetle)==".bincode(beetle$Life, breaks = seq(0, 91, by = 7))"] <- "week"
+head (beetle)
+
+
+### Mortality curves
+library (survival)
+
+surv = Surv(beetle$week, event = abs(as.numeric(beetle$Status)), type = "right")
+coxph(surv ~ 1)
+fit = coxph(surv ~ 1)
+summ = summary(survfit(fit))
+x = summ$time
+Lx = summ$surv
+
+Px = Lx[1:13]/c(1,Lx[1:12])
+plot(log(-log(Px)), cex.axis = 1, xlab = "Adult age (in weeks)", 
+ylab = "Mortality (Log-scaled)",  cex.lab = 1,cex =2,ylim = c(-5,1),
+main = "Mortality Plot", 
+     cex.main = 2, bty = "l")
+
+flexsurvreg(surv ~ 1, dist="exp")
+flexsurvreg(surv ~ 1, dist="gompertz")
+flexsurvreg(surv ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(surv ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(surv ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2) 
+
+
+surv = Surv(beetle$week, event = abs(as.numeric(beetle$Status)), type = "right")
+coxph(surv ~ beetle$Density)
+fit = coxph(surv ~ beetle$Density)
+summ = summary(survfit(fit))
+x = summ$time
+Lx = summ$surv
+cox.zph(fit)
+
+flexsurvreg(surv ~ beetle$Density+beetle$Block, dist="exp")
+flexsurvreg(surv ~ beetle$Density+beetle$Block, dist="gompertz")
+flexsurvreg(surv ~ beetle$Density+beetle$Block, dist="gompertz")$coef
+shape = flexsurvreg(surv ~ beetle$Density+beetle$Block, dist="gompertz")$coef[1]
+rate = flexsurvreg(surv ~ beetle$Density+beetle$Block, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=3) 
+
+
+
+##Mortality curves
+survH = Surv(beetle$week[which(beetle$Density == "High")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Density == "High")], type = 
+"right")
+coxph(survH~1)
+fitH = coxph(survH ~ 1)
+summH = summary(survfit(fitH))
+xH = summH$time 
+LxH = summH$surv
+PxH = LxH[1:13]/c(1,LxH[1:12])
+survM = Surv(beetle$week[which(beetle$Density == "Med")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Density == "Med")], type = 
+"right")
+coxph(survM ~ 1)
+fitM = coxph(survM ~ 1)
+summM = summary(survfit(fitM))
+xM = summM$time 
+LxM = summM$surv
+PxM = LxM[1:13]/c(1,LxM[1:12])
+survL = Surv(beetle$week[which(beetle$Density == "Low")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Density == "Low")], type = 
+"right")
+coxph(survL ~ 1)
+fitL = coxph(survL ~ 1)
+summL = summary(survfit(fitL))
+xL = summL$time 
+LxL = summL$surv
+PxL = LxL[1:13]/c(1,LxL[1:12])
+
+plot(log(-log(PxH)), cex.axis = 1, xlab = "Adult age (in weeks)", ylab = "Mortality (Log-scaled)",  
+cex.lab = 1,cex =2,ylim = c(-5,1),xlim = c(0,13),
+main = "Mortality curve for the three Density Treatments", 
+     cex.main = 2, bty = "l")
+points(log(-log(PxM)), pch = 16, cex=2)
+points(log(-log(PxL)), pch=8, cex=2)
+
+labels<-c("High", "Medium", "Low")
+legend("bottomright", title="Legend", labels, pch=c(1, 16, 8), lty=c(1:3), cex=1)
+
+flexsurvreg(survH ~ 1, dist="exp")
+flexsurvreg(survH ~ 1, dist="gompertz")
+flexsurvreg(survH ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survH ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survH ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2) 
+
+flexsurvreg(survM ~ 1, dist="exp")
+flexsurvreg(survM ~ 1, dist="gompertz")
+flexsurvreg(survM ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survM ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survM ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=2) 
+
+flexsurvreg(survL ~ 1, dist="exp")
+flexsurvreg(survL ~ 1, dist="gompertz")
+flexsurvreg(survL ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survL ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survL ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=3) 
+
+
+##Block Mortality curves 
+survA = Surv(beetle$week[which(beetle$Block == "A")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Block == "A")], type = 
+"right")
+coxph(survA~1)
+fitA = coxph(survA ~ 1)
+summA = summary(survfit(fitA))
+xA = summA$time 
+LxA = summA$surv
+PxA = LxA[1:13]/c(1,LxA[1:12])
+survB = Surv(beetle$week[which(beetle$Block == "B")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Block == "B")], type = 
+"right")
+coxph(survB~1)
+fitB = coxph(survB ~ 1)
+summB = summary(survfit(fitB))
+xB = summB$time 
+LxB = summB$surv
+PxB = LxB[1:13]/c(1,LxB[1:12])
+survC = Surv(beetle$week[which(beetle$Block == "C")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Block == "C")], type = 
+"right")
+coxph(survC~1)
+fitC = coxph(survC ~ 1)
+summC = summary(survfit(fitC))
+xC = summC$time 
+LxC = summC$surv
+PxC = LxC[1:13]/c(1,LxC[1:12])
+survD = Surv(beetle$week[which(beetle$Block == "D")], event = 
+abs(as.numeric(beetle$Status))[which(beetle$Block == "D")], type = 
+"right")
+coxph(survD~1)
+fitD = coxph(survD ~ 1)
+summD = summary(survfit(fitD))
+xD = summD$time 
+LxD = summD$surv
+PxD = LxD[1:13]/c(1,LxD[1:12])
+
+plot(log(-log(PxA)), cex.axis = 1, xlab = "Adult age (in weeks)", ylab = "Mortality (Log-scaled)",  
+cex.lab = 1,cex =2,ylim = c(-5,1),xlim = c(0,13),
+main = "Mortality curve for each Block", 
+     cex.main = 2, bty = "l")
+points(log(-log(PxB)), pch = 16, cex=2)
+points(log(-log(PxC)), pch=8, cex=2)
+points(log(-log(PxD)), pch=18, cex=2)
+labels<-c("A", "B", "C", "D")
+legend("bottomright", title="Legend", labels, pch=c(1, 16, 8, 18), lty=c(1:4), cex=1)
+
+library(flexsurv)
+
+flexsurvreg(survA ~ 1, dist="exp")
+flexsurvreg(survA ~ 1, dist="gompertz")
+flexsurvreg(survA ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survA ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survA ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2) 
+
+flexsurvreg(survB ~ 1, dist="exp")
+flexsurvreg(survB ~ 1, dist="gompertz")
+flexsurvreg(survB ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survB ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survB ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=2) 
+
+flexsurvreg(survC ~ 1, dist="exp")
+flexsurvreg(survC ~ 1, dist="gompertz")
+flexsurvreg(survC ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survC ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survC ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=3) 
+
+flexsurvreg(survD ~ 1, dist="exp")
+flexsurvreg(survD ~ 1, dist="gompertz")
+flexsurvreg(survD ~ 1, dist="gompertz")$coef
+shape = flexsurvreg(survD ~ 1, dist="gompertz")$coef[1]
+rate = flexsurvreg(survD ~ 1, dist="gompertz")$coef[2]
+x = seq(1,13)
+y = rate + x * shape
+lines(x = x, y = y, lwd = 2, lty=4) 

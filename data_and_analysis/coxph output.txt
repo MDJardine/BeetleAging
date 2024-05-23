@@ -1,0 +1,32 @@
+> model4<-coxph(Surv(beetle$Life, beetle$Status)~beetle$Density+beetle$Sex+beetle$Block)
+> summary (model4)
+Call:
+coxph(formula = Surv(beetle$Life, beetle$Status) ~ beetle$Density + 
+    beetle$Sex + beetle$Block)
+
+  n= 567, number of events= 565 
+   (288 observations deleted due to missingness)
+
+                     coef exp(coef) se(coef)     z Pr(>|z|)    
+beetle$DensityLow 0.36871   1.44586  0.12475 2.955  0.00312 ** 
+beetle$DensityMed 0.06667   1.06894  0.09687 0.688  0.49129    
+beetle$SexM       0.04255   1.04347  0.08583 0.496  0.62003    
+beetle$BlockB     0.29154   1.33849  0.10096 2.888  0.00388 ** 
+beetle$BlockC     0.77700   2.17494  0.12014 6.468 9.96e-11 ***
+beetle$BlockD     1.12321   3.07472  0.19782 5.678 1.36e-08 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                  exp(coef) exp(-coef) lower .95 upper .95
+beetle$DensityLow     1.446     0.6916    1.1322     1.846
+beetle$DensityMed     1.069     0.9355    0.8841     1.292
+beetle$SexM           1.043     0.9583    0.8819     1.235
+beetle$BlockB         1.338     0.7471    1.0982     1.631
+beetle$BlockC         2.175     0.4598    1.7186     2.752
+beetle$BlockD         3.075     0.3252    2.0865     4.531
+
+Concordance= 0.607  (se = 0.015 )
+Rsquare= 0.112   (max possible= 1 )
+Likelihood ratio test= 67.43  on 6 df,   p=1.372e-12
+Wald test            = 72.98  on 6 df,   p=1e-13
+Score (logrank) test = 76.52  on 6 df,   p=1.865e-14
